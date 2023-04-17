@@ -4,4 +4,4 @@ SELECT
 , cast (quantity as integer) as quantity
 , cast (unit_price as numeric) as unit_price
 , cast(quantity as integer) * cast(unit_price as numeric ) as gross_amount
- FROM `vit-lam-data.wide_world_importers.sales__order_lines` 
+ FROM `vit-lam-data.wide_world_importers.sales__order_lines`
