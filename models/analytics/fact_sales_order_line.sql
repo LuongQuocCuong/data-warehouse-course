@@ -1,6 +1,6 @@
 with fact_sale__soure as (
 select * 
-from `vit-lam-data.wide_world_importers.sales__order_lines`
+from `vit-lam-data.wide_world_importers.sales__order_lines` 
 )
 
 , fact_sale_rename_column as (
@@ -24,10 +24,13 @@ from fact_sale_rename_column
 )
 
 SELECT 
-  product_key
-, sales_order_line_key
-, quantity
-, unit_price
-, sale_order_key
-,quantity * unit_price as gross_amount
- FROM fact_sale_cast_data
+  fact_line.product_key
+, fact_line.sales_order_line_key
+, stg_sale_order.customer_key
+, fact_line.quantity
+, fact_line.unit_price
+, fact_line.sale_order_key
+,fact_line.quantity * fact_line.unit_price as gross_amount
+FROM fact_sale_cast_data as fact_line
+left join `data-warehouse-course-384003.wide_world_importers_dwh_staging.stg_sale_order` as stg_sale_order
+on fact_line.sale_order_key = stg_sale_order.sale_order_key
