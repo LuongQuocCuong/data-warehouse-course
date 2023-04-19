@@ -35,6 +35,16 @@ SELECT
 FROM dim_customer__cast_data
 )
 
+, dim_customer__handle_null as(
+select 
+    customer_key
+  , coalesce (customer_name, 'Undefined') AS customer_name
+  , customer_category_key
+  , buying_group_key
+  , coalesce(is_on_credit_hold,'Undefined' ) AS is_on_credit_hold
+FROM dim_customer__convert_is_on_credit_hold
+)
+
 SELECT 
 dim_customer.customer_key
 ,dim_customer.customer_name
@@ -43,7 +53,7 @@ dim_customer.customer_key
 ,dim_customer.buying_group_key
 ,buying_group.buying_group_name
 ,dim_customer.is_on_credit_hold
-FROM dim_customer__convert_is_on_credit_hold as dim_customer
+FROM dim_customer__handle_null as dim_customer
 left join {{ref('stg_customer_categories')}} as customer_categories
 on customer_categories.customer_category_key = dim_customer.customer_category_key
 left join {{ref('buying_group')}} as buying_group
