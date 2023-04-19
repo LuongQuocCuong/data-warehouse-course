@@ -29,7 +29,7 @@ from dim_product__rename_column
     case
       when is_chiller_stock_boolean is true then 'Chiller Stock'
       when is_chiller_stock_boolean is false then 'Not Chiller Stock'
-      when is_chiller_stock_boolean is null then 'undefined'
+      when is_chiller_stock_boolean is null then 'Undefined'
       else 'invalid'
     end as is_chiller_stock
   from dim_product__cast_type
