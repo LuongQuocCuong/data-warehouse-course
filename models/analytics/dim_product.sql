@@ -49,9 +49,9 @@ SELECT
   dim_product.product_key
   , dim_product.product_name
   , brand_name
-  , dim_product.supplier_key
-  , dim_supplier.supplier_name
   , dim_product.is_chiller_stock
+  , dim_supplier.supplier_name
+  , dim_product.supplier_key
 FROM dim_product__handle_null as dim_product
 LEFT JOIN {{ref('dim_supplier')}} as dim_supplier
 on dim_product.supplier_key = dim_supplier.supplier_key
