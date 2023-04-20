@@ -25,6 +25,7 @@ from fact_sale_rename_column
 
 SELECT 
   fact_line.product_key
+, stg_sale_order.order_date
 , fact_line.sales_order_line_key
 , stg_sale_order.customer_key
 , fact_line.quantity
