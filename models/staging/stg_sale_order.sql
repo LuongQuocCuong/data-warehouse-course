@@ -22,5 +22,5 @@ from stg_sale_order__rename
 SELECT 
   customer_key
   ,sale_order_key
-  ,picked_by_person_key
+  ,coalesce( picked_by_person_key, 0) as picked_by_person_key
 FROM stg_sale_order__cast_data
