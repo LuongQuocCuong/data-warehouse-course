@@ -30,7 +30,8 @@ SELECT
 , fact_line.quantity
 , fact_line.unit_price
 , fact_line.sale_order_key
-,fact_line.quantity * fact_line.unit_price as gross_amount
+, stg_sale_order.picked_by_person_key
+, fact_line.quantity * fact_line.unit_price as gross_amount
 FROM fact_sale_cast_data as fact_line
 left join {{ref('stg_sale_order')}} as stg_sale_order
 on fact_line.sale_order_key = stg_sale_order.sale_order_key
