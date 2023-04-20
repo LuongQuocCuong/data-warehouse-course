@@ -17,7 +17,19 @@ SELECT
 FROM dim_person__rename
 )
 
+, dim_person__add_undifined_record as (
+SELECT 
+  person_id
+  ,full_name
+FROM dim_person__cast_data
+union all 
+SELECT
+  '0' as person_id
+  ,'Undifined' as full_name
+)
+
+
 SELECT 
   person_key
   ,coalesce (full_name, 'Undifined') as full_name
-FROM dim_person__cast_data
+FROM dim_person__add_undifined_record
