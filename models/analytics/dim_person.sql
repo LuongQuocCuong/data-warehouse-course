@@ -19,13 +19,19 @@ FROM dim_person__rename
 
 , dim_person__add_undifined_record as (
 SELECT 
-  person_id
+  person_key
   ,full_name
 FROM dim_person__cast_data
+
 union all 
 SELECT
-  '0' as person_id
+  0 as person_key
   ,'Undifined' as full_name
+
+,union all 
+SELECT
+  -1 as person_key
+  ,'Invalid' as full_name
 )
 
 
