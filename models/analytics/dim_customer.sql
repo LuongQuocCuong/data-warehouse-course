@@ -56,5 +56,5 @@ dim_customer.customer_key
 FROM dim_customer__handle_null as dim_customer
 left join {{ref('stg_customer_categories')}} as customer_categories
 on customer_categories.customer_category_key = dim_customer.customer_category_key
-left join {{ref('buying_group')}} as buying_group
+left join {{ref('stg_buying_group')}} as buying_group
 on dim_customer.buying_group_key = buying_group.buying_group_key
