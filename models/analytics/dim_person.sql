@@ -2,40 +2,68 @@ with dim_person__source as (
 SELECT *
 FROM `vit-lam-data.wide_world_importers.application__people`
 )
-
 , dim_person__rename as (
 SELECT 
   person_id as person_key
   , full_name
+  , is_employee
+  , is_salesperson as is_sales_person
+  , preferred_name
 FROM dim_person__source
 )
 
 , dim_person__cast_data as(
 SELECT
   cast (person_key as integer) as person_key
-  ,cast(full_name as string) as full_name
+  , cast(full_name as string) as full_name
+  , cast(is_employee as boolean) as is_employee_boolean
+  , cast(is_sales_person as boolean) as is_sales_person_boolean
+  , cast (preferred_name as string) as preferred_name
 FROM dim_person__rename
 )
 
-, dim_person__add_undifined_record as (
-SELECT 
-  person_key
-  ,full_name
+,dim_person__change_boolean as (
+SELECT
+*
+  , CASE
+      WHEN is_employee_boolean IS TRUE THEN 'Employee'
+      WHEN is_employee_boolean IS FALSE THEN 'Not Employee'
+      ELSE 'Invilid'
+    END AS is_employee
+  
+  ,  CASE
+      WHEN is_sales_person_boolean IS TRUE THEN 'Sales Person'
+      WHEN is_sales_person_boolean IS FALSE THEN 'Not Sales Person'
+      ELSE 'Invilid'
+    END AS is_sales_person
 FROM dim_person__cast_data
-
-union all 
-SELECT
-  0 as person_key
-  ,'Undifined' as full_name
-
-,union all 
-SELECT
-  -1 as person_key
-  ,'Invalid' as full_name
 )
 
+, dim_person__add_undefined_record as(
+SELECT
+person_key
+, full_name
+, is_employee
+, is_sales_person
+FROM dim_person__change_boolean
+  UNION ALL
+    SELECT  
+      0 AS person_key
+      ,'Undefined' AS full_name
+      ,'Undefined' AS is_employee
+      ,'Undefined' AS is_sales_person
+  ,UNION ALL
+    SELECT
+      -1 AS person_key
+      ,'Invalid' AS full_name
+      ,'Invalid' AS is_employee
+      ,'Invalid' AS is_sales_person
+)
 
-SELECT 
-  person_key
-  ,coalesce (full_name, 'Undifined') as full_name
-FROM dim_person__add_undifined_record
+SELECT
+person_key
+, full_name
+, is_employee
+, is_sales_person
+FROM dim_person__add_undefined_record
+order by person_key
