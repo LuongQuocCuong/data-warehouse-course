@@ -1,38 +1,38 @@
 with stg_location__source as (
 SELECT * 
-FROM `vit-lam-data.wide_world_importers.application__state_provinces`
+FROM `vit-lam-data.wide_world_importers.application__countries`
 )
 
 , stg_location__rename_column as(
 SELECT
-  state_province_id as state_province_key
-  , state_province_name 
+  country_id as country_key
+  , country_name
 FROM stg_location__source
 )
 
 , stg_location__cast_data as (
 SELECT
-  cast (state_province_key as integer) as state_province_key
-  , cast (state_province_name as string) as state_province_name
+  cast (country_key as integer) as country_key
+  , cast (country_name as string) as country_name
 FROM stg_location__rename_column
 )
 
 , stg_location_add_undefined_record as (
 SELECT 
-  state_province_key
-  ,state_province_name
+  country_key
+  ,country_name
 FROM stg_location__cast_data
 UNION ALL
   SELECT
-    0 as state_province_key
-    ,'Undefined' as state_province_name
+    0 as country_key
+    ,'Undefined' as country_name
 , UNION ALL
   SELECT
-    -1 as state_province_key
-    ,'Invalid' as state_province_name
+    -1 as country_key
+    ,'Invalid' as country_name
 )
 
-SELECT 
-  state_province_key
-  ,state_province_name
+SELECT
+  country_key
+  ,country_name
 FROM stg_location_add_undefined_record
