@@ -28,11 +28,12 @@ select
   , dim_supllier.supplier_category_key
   , supplier_category.supplier_category_name
   , dim_supllier.delivery_city_key
-  , stg_location.delivery_city_name
-  , stg_location.delivery_province_name
-  , stg_location.delivery_country_name
+  , stg_location.supplier_delivery_city_name
+  , stg_location.supplier_delivery_province_name
+  , stg_location.supplier_delivery_country_name
+
 FROM dim_supplier__cast_data as dim_supllier
 LEFT JOIN {{ref('stg_supplier_category')}} as supplier_category
   ON dim_supllier.supplier_category_key = supplier_category.supplier_category_key
 LEFT JOIN {{ref('stg_location')}} as stg_location
-  ON stg_location.delivery_city_key = dim_supllier.delivery_city_key
+  ON stg_location.supplier_delivery_city_key = dim_supllier.delivery_city_key
