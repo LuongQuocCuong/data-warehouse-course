@@ -56,19 +56,19 @@ from dim_product__rename_column
 , dim_product__handle_null as(
 select  
 coalesce(color_key,0) as color_key
-  , product_key
-  , outer_package_key
-  , coalesce(product_name,'Undifined') as product_name
-  , coalesce(brand,'Undifined') as brand
-  , supplier_key
+  , coalesce(product_key,0) as product_key
+  , coalesce(outer_package_key,0) as outer_package_key
+  , product_name
+  , brand
+  , coalesce(supplier_key,0) as supplier_key
   , is_chiller_stock
-  , coalesce(size,'Undifined') as size
+  , size
   , lead_time_days
   , quantity_per_outer
   , tax_rate
   , unit_price
   , recommended_retail_price
-  , unit_package_key
+  , coalesce(unit_package_key,0) as unit_package_key
 from dim_product__convert_is_chiller_stock
 )
 
