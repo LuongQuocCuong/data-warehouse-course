@@ -25,13 +25,14 @@ FROM dim_supplier__rename_column
 select 
   dim_supllier.supplier_key
   , dim_supllier.supplier_name
-  , dim_supllier.supplier_category_key
+  , coalesce(dim_supllier.supplier_category_key,0) as supplier_category_key
   , supplier_category.supplier_category_name
-  , dim_supllier.supplier_delivery_city_key
+  , coalesce(dim_supllier.supplier_delivery_city_key,0) as supplier_delivery_city_key
   , stg_location.supplier_delivery_city_name
   , stg_location.supplier_delivery_province_name
   , stg_location.supplier_delivery_country_name
-
+  , coalesce(stg_location.supplier_delivery_province_key,0) as supplier_delivery_province_key
+  , coalesce(stg_location.supplier_delivery_country_key,0) as supplier_delivery_country_key
 FROM dim_supplier__cast_data as dim_supllier
 LEFT JOIN {{ref('stg_supplier_category')}} as supplier_category
   ON dim_supllier.supplier_category_key = supplier_category.supplier_category_key
