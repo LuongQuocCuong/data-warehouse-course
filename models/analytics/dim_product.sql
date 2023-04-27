@@ -6,10 +6,19 @@ FROM `vit-lam-data.wide_world_importers.warehouse__stock_items`
 ,dim_product__rename_column as (
 select 
   stock_item_id as product_key
-  ,stock_item_name as product_name
-  ,brand as brand_name
-  ,supplier_id as supplier_key
-  ,is_chiller_stock as is_chiller_stock
+  , stock_item_name as product_name
+  , brand 
+  , size
+  , lead_time_days
+  , quantity_per_outer
+  , is_chiller_stock
+  , tax_rate
+  , supplier_id as supplier_key
+  , unit_price
+  ,	recommended_retail_price
+  , unit_package_id as unit_package_key
+  , outer_package_id as outer_package_key
+  , color_id as color_key
 from dim_product__source
 )
 
@@ -17,9 +26,18 @@ from dim_product__source
 select
   CAST(product_key AS INTEGER) as product_key
   , CAST(product_name AS STRING) as product_name
-  , CAST(brand_name AS STRING) as brand_name
-  , CAST(supplier_key AS INTEGER) AS supplier_key
+  , CAST(brand AS STRING) as brand
+  , CAST(size AS STRING) as size
+  , CAST(lead_time_days AS INTEGER) as lead_time_days
+  , CAST(color_key AS INTEGER) as color_key
+  , CAST(quantity_per_outer AS INTEGER) as quantity_per_outer
   , CAST (is_chiller_stock as boolean ) as is_chiller_stock_boolean
+  , CAST (tax_rate as numeric ) as tax_rate
+  , CAST (unit_price as numeric ) as unit_price
+  , CAST (recommended_retail_price as numeric ) as recommended_retail_price
+  , CAST(supplier_key AS INTEGER) AS supplier_key
+  , CAST(unit_package_key AS INTEGER) AS unit_package_key
+  , CAST(outer_package_key AS INTEGER) AS outer_package_key
 from dim_product__rename_column
 )
 
@@ -36,22 +54,57 @@ from dim_product__rename_column
 )
 
 , dim_product__handle_null as(
-select
-  product_key
+select  
+coalesce(color_key,0) as color_key
+  , product_key
+  , outer_package_key
   , coalesce(product_name,'Undifined') as product_name
-  , coalesce(brand_name,'Undifined') as brand_name
+  , coalesce(brand,'Undifined') as brand
   , supplier_key
   , is_chiller_stock
+  , coalesce(size,'Undifined') as size
+  , lead_time_days
+  , quantity_per_outer
+  , tax_rate
+  , unit_price
+  , recommended_retail_price
+  , unit_package_key
 from dim_product__convert_is_chiller_stock
 )
 
 SELECT 
-  dim_product.product_key
-  , dim_product.product_name
-  , brand_name
-  , dim_product.is_chiller_stock
+  dim_product.product_key 
+  , dim_product.product_name 
+  , dim_product.brand
+  , dim_product.size 
+  , dim_product.lead_time_days 
+  , dim_product.quantity_per_outer 
+  , dim_product.is_chiller_stock 
+  , dim_product.tax_rate 
+  , dim_product.unit_price 
+  , dim_product.recommended_retail_price 
+  , dim_product.color_key
+  , color.color_name
+  , dim_product.outer_package_key
+  , stg_outer_package_type.package_type_name as outer_package_name
+  , dim_product.unit_package_key
+  , stg_unit_package_type.package_type_name as unit_package_name
   , dim_supplier.supplier_name
   , dim_product.supplier_key
+  , dim_supplier.supplier_category_key
+  , dim_supplier.supplier_category_name
+  , dim_supplier.supplier_delivery_city_key
+  , dim_supplier.supplier_delivery_city_name
+  , dim_supplier.supplier_delivery_province_key
+  , dim_supplier.supplier_delivery_province_name
+  , dim_supplier.supplier_delivery_country_key
+  , dim_supplier.supplier_delivery_country_name
 FROM dim_product__handle_null as dim_product
 LEFT JOIN {{ref('dim_supplier')}} as dim_supplier
-on dim_product.supplier_key = dim_supplier.supplier_key
+  ON dim_product.supplier_key = dim_supplier.supplier_key
+LEFT JOIN {{ref("stg_color")}} as color
+  ON color.color_key = dim_product.color_key 
+LEFT JOIN {{ref('stg_package_type')}} as stg_outer_package_type
+  ON stg_outer_package_type.package_type_key = dim_product.outer_package_key
+LEFT JOIN {{ref('stg_package_type')}} as stg_unit_package_type
+  ON stg_unit_package_type.package_type_key = dim_product.unit_package_key
