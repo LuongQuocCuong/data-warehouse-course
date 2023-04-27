@@ -18,7 +18,22 @@ select
 from package_type__rename_column
 )
 
+, package_type__add_undefined_record as (
+SELECT
+  package_type_key
+  , package_type_name
+FROM package_type__cast_type
+UNION ALL
+  SELECT
+    0 as package_type_key
+    ,'Undefined' as package_type_name
+,UNION ALL
+  SELECT
+    -1 as package_type_key
+    ,'Invalid' as package_type_name
+)
+
 select
   package_type_key
   ,package_type_name
-from package_type__cast_type
+from package_type__add_undefined_record
