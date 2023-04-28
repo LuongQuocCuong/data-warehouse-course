@@ -28,13 +28,13 @@ SELECT
   , CASE
       WHEN is_employee_boolean IS TRUE THEN 'Employee'
       WHEN is_employee_boolean IS FALSE THEN 'Not Employee'
-      ELSE 'Invilid'
+      ELSE 'Invalid'
     END AS is_employee
   
   ,  CASE
       WHEN is_sales_person_boolean IS TRUE THEN 'Sales Person'
       WHEN is_sales_person_boolean IS FALSE THEN 'Not Sales Person'
-      ELSE 'Invilid'
+      ELSE 'Invalid'
     END AS is_sales_person
 FROM dim_person__cast_data
 )
@@ -62,8 +62,7 @@ FROM dim_person__change_boolean
 
 SELECT
 person_key
-, full_name
-, is_employee
-, is_sales_person
+, coalesce( full_name , 'Invalid') as full_name
+, coalesce( is_employee , 'Invalid') as is_employee
+, coalesce( is_sales_person , 'Invalid') as is_sales_person
 FROM dim_person__add_undefined_record
-order by person_key
