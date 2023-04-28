@@ -13,6 +13,7 @@ SELECT
   , order_date
   , expected_delivery_date
   , picking_completed_when
+  , is_undersupply_backordered
 FROM stg_sale_order__source
 )
 
@@ -26,7 +27,19 @@ SELECT
   , cast (order_date as date) as order_date
   , cast (expected_delivery_date as date) as expected_delivery_date
   , cast (picking_completed_when as date) as picking_completed_when
+  , cast (is_undersupply_backordered as boolean) as is_undersupply_backordered_boolean
 FROM stg_sale_order__rename
+)
+
+, stg_sale_order__convert_boolean as (
+SELECT
+  *
+  , CASE
+      WHEN is_undersupply_backordered_boolean is TRUE then 'Under Supply Back Ordered'
+      WHEN is_undersupply_backordered_boolean is FALSE then 'Not Under Supply Back Ordered'
+      ELSE 'Invalid'
+    END AS is_undersupply_back_ordered
+FROM stg_sale_order__cast_data
 )
 
 , stg_sale_order__Unifined_handle as (
@@ -39,7 +52,8 @@ SELECT
   , order_date
   , expected_delivery_date
   , picking_completed_when
-FROM stg_sale_order__cast_data
+  , is_undersupply_back_ordered
+FROM stg_sale_order__convert_boolean
 ) 
 
 SELECT 
@@ -51,4 +65,5 @@ SELECT
   , order_date
   , expected_delivery_date
   , picking_completed_when
+  , is_undersupply_back_ordered
 FROM stg_sale_order__Unifined_handle
