@@ -58,16 +58,16 @@ select
 coalesce(color_key,0) as color_key
   , coalesce(product_key,0) as product_key
   , coalesce(outer_package_key,0) as outer_package_key
-  , product_name
-  , brand
+  , coalesce(product_name , 'Invalid') as product_name
+  , coalesce( brand , 'Invalid') as brand
   , coalesce(supplier_key,0) as supplier_key
-  , is_chiller_stock
-  , size
-  , lead_time_days
-  , quantity_per_outer
-  , tax_rate
-  , unit_price
-  , recommended_retail_price
+  , coalesce( is_chiller_stock, 'Invalid') as is_chiller_stock
+  , coalesce( size , 'Invalid') as size
+  , coalesce( lead_time_days , 0) as lead_time_days
+  , coalesce( quantity_per_outer ,0) as quantity_per_outer
+  , coalesce( tax_rate , 0) as tax_rate
+  , coalesce( unit_price , 0) as unit_price
+  , coalesce( recommended_retail_price , 0) as recommended_retail_price
   , coalesce(unit_package_key,0) as unit_package_key
 from dim_product__convert_is_chiller_stock
 )
@@ -84,21 +84,21 @@ SELECT
   , dim_product.unit_price 
   , dim_product.recommended_retail_price 
   , dim_product.color_key
-  , color.color_name
+  , coalesce( color.color_name ,'Invalid') as color_name
   , dim_product.outer_package_key
-  , stg_outer_package_type.package_type_name as outer_package_name
+  , coalesce( stg_outer_package_type.package_type_name, 'Invalid') as outer_package_name
   , dim_product.unit_package_key
-  , stg_unit_package_type.package_type_name as unit_package_name
-  , dim_supplier.supplier_name
+  , coalesce( stg_unit_package_type.package_type_name , 'Invalid') as unit_package_name
+  , coalesce( dim_supplier.supplier_name , 'Invalid') as supplier_name
   , dim_product.supplier_key
-  , dim_supplier.supplier_category_key
-  , dim_supplier.supplier_category_name
-  , dim_supplier.supplier_delivery_city_key
-  , dim_supplier.supplier_delivery_city_name
-  , dim_supplier.supplier_delivery_province_key
-  , dim_supplier.supplier_delivery_province_name
-  , dim_supplier.supplier_delivery_country_key
-  , dim_supplier.supplier_delivery_country_name
+  , coalesce( dim_supplier.supplier_category_key , 0) as supplier_category_key
+  , coalesce( dim_supplier.supplier_category_name , 'Invalid') as supplier_category_name
+  , coalesce( dim_supplier.supplier_delivery_city_key , 0) as supplier_delivery_city_key
+  , coalesce( dim_supplier.supplier_delivery_city_name , 'Invalid') as supplier_delivery_city_name
+  , coalesce( dim_supplier.supplier_delivery_province_key , 0) as supplier_delivery_province_key
+  , coalesce( dim_supplier.supplier_delivery_province_name ,'Invalid') as supplier_delivery_province_name
+  , coalesce( dim_supplier.supplier_delivery_country_key , 0) as supplier_delivery_country_key
+  , coalesce( dim_supplier.supplier_delivery_country_name , 'Invalid') as supplier_delivery_country_name
 FROM dim_product__handle_null as dim_product
 LEFT JOIN {{ref('dim_supplier')}} as dim_supplier
   ON dim_product.supplier_key = dim_supplier.supplier_key
