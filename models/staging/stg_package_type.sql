@@ -35,5 +35,5 @@ UNION ALL
 
 select
   package_type_key
-  ,package_type_name
+  ,coalesce( package_type_name ,'Invalid') as package_type_name
 from package_type__add_undefined_record
