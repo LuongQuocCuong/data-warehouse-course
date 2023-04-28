@@ -50,11 +50,13 @@ SELECT
 , fact_line.order_key
 , fact_line.product_key
 , fact_line.package_type_key
-, stg_sale_order.customer_key
-, stg_sale_order.picked_by_person_key
-, stg_sale_order.contact_person_key
+, coalesce( stg_sale_order.customer_key , 0) as customer_key
+, coalesce( stg_sale_order.picked_by_person_key , 0) as picked_by_person_key
+, coalesce( stg_sale_order.sales_person_key , 0) as sales_person_key
+, coalesce( stg_sale_order.contact_person_key ,0) as contact_person_key
 , fact_line.picking_completed_when as line_picking_completed_when
 , stg_sale_order.picking_completed_when as order_picking_completed_when
+, stg_sale_order.is_undersupply_back_ordered
 , stg_sale_order.order_date
 , stg_sale_order.expected_delivery_date
 , fact_line.picked_quantity
