@@ -66,12 +66,12 @@ FROM dim_customer__cast_data
 , dim_customer__handle_null as(
 select 
  coalesce( customer_key , 0) as customer_key
-  , customer_name
-  , is_statement_sent
-  , is_on_credit_hold
-  , credit_limit
-  , standard_discount_percentage
-  , payment_days
+  , coalesce( customer_name , 'Invalid') as customer_name
+  , coalesce( is_statement_sent , 'Invalid') as is_statement_sent
+  , coalesce( is_on_credit_hold , 'Invalid') as is_on_credit_hold
+  , coalesce( credit_limit , 0) as credit_limit
+  , coalesce( standard_discount_percentage , 0) as standard_discount_percentage
+  , coalesce( payment_days , 0) as payment_days
   , account_opened_date
   , coalesce( customer_category_key ,0) as customer_category_key
   , coalesce( delivery_city_key ,0) as delivery_city_key
@@ -94,29 +94,29 @@ SELECT
   , dim_customer.payment_days
   , dim_customer.account_opened_date
   , dim_customer.customer_category_key
-  , customer_category.customer_category_name
+  , coalesce( customer_category.customer_category_name , 'Invalid') as customer_category_name
   , dim_customer.buying_group_key
-  , buying_group.buying_group_name
+  , coalesce( buying_group.buying_group_name , 'Invalid') as buying_group_name
   , dim_customer.delivery_method_key
-  , delivery_method.delivery_method_name
+  , coalesce( delivery_method.delivery_method_name , 'Invalid') as delivery_method_name
   , dim_customer.delivery_city_key
-  , stg_delivery_location.supplier_delivery_city_name as delivery_city_name
-  , stg_delivery_location.supplier_delivery_province_key as delivery_state_province_key
-  , stg_delivery_location.supplier_delivery_province_name as delivery_state_province_name
-  , stg_delivery_location.supplier_delivery_country_key as delivery_country_key
-  , stg_delivery_location.supplier_delivery_country_name as delivery_country_name
+  , coalesce( stg_delivery_location.supplier_delivery_city_name, 'Invalid') as delivery_city_name
+  , coalesce( stg_delivery_location.supplier_delivery_province_key, 0) as delivery_state_province_key
+  , coalesce( stg_delivery_location.supplier_delivery_province_name,'Invalid') as delivery_state_province_name
+  , coalesce( stg_delivery_location.supplier_delivery_country_key , 0) as delivery_country_key
+  , coalesce( stg_delivery_location.supplier_delivery_country_name,'Invalid') as delivery_country_name
   , dim_customer.postal_city_key
-  , stg_postal_location.supplier_delivery_city_name as postal_city_name
-  , stg_postal_location.supplier_delivery_province_key as postal_state_province_key
-  , stg_postal_location.supplier_delivery_province_name as postal_state_province_name
-  , stg_postal_location.supplier_delivery_country_key as postal_state_country_key
-  , stg_postal_location.supplier_delivery_country_name as postal_state_country_name
+  , coalesce( stg_postal_location.supplier_delivery_city_name , 'Invalid') as postal_city_name
+  , coalesce( stg_postal_location.supplier_delivery_province_key , 0 ) as postal_state_province_key
+  , coalesce( stg_postal_location.supplier_delivery_province_name , 'Invalid') as postal_state_province_name
+  , coalesce( stg_postal_location.supplier_delivery_country_key , 0 ) as postal_state_country_key
+  , coalesce( stg_postal_location.supplier_delivery_country_name ,'Invalid') as postal_state_country_name
   , dim_customer.primary_contact_person_key
-  , dim_person__primary_contact.full_name as primary_contact_person_name
+  , coalesce( dim_person__primary_contact.full_name , 'Invalid')as primary_contact_person_name
   , dim_customer.alternate_contact_person_key
-  , dim_person__alternate_contact.full_name as alternate_contact_person_name
+  , coalesce( dim_person__alternate_contact.full_name ,'Invalid') as alternate_contact_person_name
   , dim_customer.customer_key as bill_to_customer_key
-  , bill_to_customer.customer_name as bill_to_customer_name
+  , coalesce( bill_to_customer.customer_name, 'Invalid') as bill_to_customer_name
 FROM dim_customer__handle_null as dim_customer
 LEFT JOIN {{ref('stg_customer_categories')}} as customer_category
   ON customer_category.customer_category_key = dim_customer.customer_category_key
