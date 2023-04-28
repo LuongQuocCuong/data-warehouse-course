@@ -56,7 +56,7 @@ SELECT
 , coalesce( stg_sale_order.contact_person_key ,0) as contact_person_key
 , fact_line.picking_completed_when as line_picking_completed_when
 , stg_sale_order.picking_completed_when as order_picking_completed_when
-, stg_sale_order.is_undersupply_back_ordered
+, FARM_FINGERPRINT(CONCAT(stg_sale_order.is_undersupply_backordered_boolean_key,"-",fact_line.package_type_key)) as sales_order_line_indicator_key
 , stg_sale_order.order_date
 , stg_sale_order.expected_delivery_date
 , fact_line.picked_quantity
