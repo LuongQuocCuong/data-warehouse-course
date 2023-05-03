@@ -10,10 +10,14 @@ models:
       - name: is_employee
         tests:
           - not_null
+          - accepted_values:
+              values: ['Employee' , 'Not Employee', 'Undefined', 'Invalid']
 
       - name: is_sales_person
         tests:
           - not_null
+          - accepted_values:
+              values: ['Sales Person' , 'Not Sales Person','Undefined', 'Invalid']
 
       - name: person_key
         tests:
