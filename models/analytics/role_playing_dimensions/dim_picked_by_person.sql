@@ -4,5 +4,3 @@ SELECT
   , is_employee	
   , is_sales_person
 FROM {{ref('dim_person')}}
-WHERE is_sales_person = 'Not Sales Person'
-  OR person_key in (0,-1)
