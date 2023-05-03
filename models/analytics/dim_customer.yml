@@ -1,7 +1,10 @@
 version: 2
 
 models:                  
-  - name: dim_customer        
+  - name: dim_customer
+    tests:
+    - dbt_utils.equal_rowcount:
+        compare_model: "`vit-lam-data.wide_world_importers.sales__customers`"
     columns:
       - name: customer_key
         tests:
