@@ -1,0 +1,18 @@
+version: 2
+
+models:                  
+  - name: dim_sales_order_line_indicator        
+    columns:
+      - name: is_undersupply_back_ordered_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Not Under Supply Back Ordered' , 'Under Supply Back Ordered']
+
+      - name: sales_order_line_indicator_key
+        tests:
+          - not_null
+
+      - name: package_type_key
+        tests:
+          - not_null
