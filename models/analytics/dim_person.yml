@@ -1,8 +1,19 @@
 version: 2
 
 models:                  
-  - name: dim_person        
+  - name: dim_person
+    tests:
+    - dbt_utils.equal_rowcount:
+        compare_model: "`vit-lam-data.wide_world_importers.application__people`"
+        config:
+          error_if: "<> 2"
+          warn_if: "<> 2"
     columns:
+      - name: person_key
+        tests:
+          - not_null
+          - unique
+
       - name: full_name
         tests:
           - not_null
@@ -18,8 +29,3 @@ models:
           - not_null
           - accepted_values:
               values: ['Sales Person' , 'Not Sales Person','Undefined', 'Invalid']
-
-      - name: person_key
-        tests:
-          - not_null
-          - unique
