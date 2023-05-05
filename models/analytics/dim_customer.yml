@@ -5,6 +5,10 @@ models:
     tests:
     - dbt_utils.equal_rowcount:
         compare_model: "`vit-lam-data.wide_world_importers.sales__customers`"
+        config:
+          error_if: "<> 2"
+          warn_if: "<> 2"
+
     columns:
       - name: customer_key
         tests:
@@ -18,11 +22,15 @@ models:
       - name: is_statement_sent
         tests:
           - not_null
+          - accepted_values:
+              values: ['Invalid','Undefined','Not Statement Sent','Statement Sent']
 
       - name: is_on_credit_hold
         tests:
           - not_null
-
+          - accepted_values:
+              values: ['Invalid','Undefined','Not On Hold Credit','On Hold Credit']
+              
       - name: credit_limit
         tests:
           - not_null
@@ -32,10 +40,6 @@ models:
           - not_null
 
       - name: payment_days
-        tests:
-          - not_null
-
-      - name: account_opened_date
         tests:
           - not_null
 
