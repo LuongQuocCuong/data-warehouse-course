@@ -39,20 +39,26 @@ SELECT
       WHEN is_undersupply_backordered_boolean is FALSE then 'Not Under Supply Back Ordered'
       ELSE 'Invalid'
     END AS is_undersupply_back_ordered
+  , CASE
+      WHEN is_undersupply_backordered_boolean is TRUE then 'true'
+      WHEN is_undersupply_backordered_boolean is FALSE then 'false'
+      ELSE 'Invalid'
+    END AS is_undersupply_back_ordered_boolean
 FROM stg_sale_order__cast_data
 )
 
 , stg_sale_order__Unifined_handle AS (
 SELECT
-  coalesce (order_key , 0) AS order_key
-  , coalesce (customer_key , 0) AS customer_key
-  , coalesce (sales_person_key , 0) AS sales_person_key
-  , coalesce (picked_by_person_key , 0) AS picked_by_person_key
-  , coalesce (contact_person_key , 0) AS contact_person_key
+  COALESCE (order_key , 0) AS order_key
+  , COALESCE (customer_key , 0) AS customer_key
+  , COALESCE (sales_person_key , 0) AS sales_person_key
+  , COALESCE (picked_by_person_key , 0) AS picked_by_person_key
+  , COALESCE (contact_person_key , 0) AS contact_person_key
   , order_date
   , expected_delivery_date
   , picking_completed_when
   , is_undersupply_back_ordered
+  , is_undersupply_back_ordered_boolean
 FROM stg_sale_order__convert_boolean
 ) 
 
@@ -67,6 +73,7 @@ SELECT
   , expected_delivery_date
   , picking_completed_when
   , is_undersupply_back_ordered
+  , is_undersupply_back_ordered_boolean
 FROM stg_sale_order__Unifined_handle
 UNION ALL
   SELECT
@@ -79,6 +86,7 @@ UNION ALL
     , CAST (NULL AS DATE) AS expected_delivery_date
     , CAST (NULL AS DATE) AS picking_completed_when
     , 'Undefined' AS is_undersupply_back_ordered
+    , 'undefined' AS is_undersupply_back_ordered_boolean
 , UNION ALL
   SELECT
     -1 AS order_key
@@ -90,6 +98,7 @@ UNION ALL
     , CAST (NULL AS DATE) AS expected_delivery_date
     , CAST (NULL AS DATE) AS picking_completed_when
     , 'Invalid' AS is_undersupply_back_ordered
+    , 'Invalid' AS is_undersupply_back_ordered_boolean
 )
 SELECT 
   order_key
@@ -101,4 +110,5 @@ SELECT
   , expected_delivery_date
   , picking_completed_when
   , is_undersupply_back_ordered
+  , is_undersupply_back_ordered_boolean
 FROM stg_sale_order__add_undifined_record
