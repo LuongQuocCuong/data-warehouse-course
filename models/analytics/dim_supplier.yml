@@ -1,0 +1,47 @@
+version: 2
+
+models:                  
+  - name: dim_supplier
+    tests:
+    - dbt_utils.equal_rowcount:
+        compare_model: "`vit-lam-data.wide_world_importers.purchasing__suppliers`"
+        config:
+          error_if: "<> 2"
+          warn_if: "<> 2"
+    columns:
+      - name: supplier_key
+        tests:
+          - not_null
+          - unique
+
+      - name: supplier_name
+        tests:
+          - not_null
+
+      - name: supplier_category_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_supplier_category')
+              field: supplier_category_key
+
+      - name: supplier_delivery_city_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_location')
+              field: supplier_delivery_city_key
+
+      - name: supplier_delivery_province_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_location')
+              field: supplier_delivery_province_key
+              
+      - name: supplier_delivery_country_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_location')
+              field: supplier_delivery_country_key
