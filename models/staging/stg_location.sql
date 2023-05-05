@@ -42,9 +42,9 @@ UNION ALL
 SELECT
   city.city_key as supplier_delivery_city_key
   , city.city_name as supplier_delivery_city_name
-  , city.state_province_key as supplier_delivery_province_key
+  , coalesce(city.state_province_key,0) as supplier_delivery_province_key
   , province.province_name as supplier_delivery_province_name
-  , province.country_key as supplier_delivery_country_key
+  , coalesce(province.country_key,0) as supplier_delivery_country_key
   , country.country_name as supplier_delivery_country_name
 FROM stg_location_add_undefined_record as city
 LEFT JOIN {{ref('stg_location_province')}} as province
