@@ -1,28 +1,28 @@
-with dim_person__source as (
+WITH dim_person__source AS (
 SELECT *
 FROM `vit-lam-data.wide_world_importers.application__people`
 )
-, dim_person__rename as (
+, dim_person__rename AS (
 SELECT 
-  person_id as person_key
+  person_id AS person_key
   , full_name
   , is_employee
-  , is_salesperson as is_sales_person
+  , is_salesperson AS is_sales_person
   , preferred_name
 FROM dim_person__source
 )
 
-, dim_person__cast_data as(
+, dim_person__cast_data AS (
 SELECT
-  cast (person_key as integer) as person_key
-  , cast(full_name as string) as full_name
-  , cast(is_employee as boolean) as is_employee_boolean
-  , cast(is_sales_person as boolean) as is_sales_person_boolean
-  , cast (preferred_name as string) as preferred_name
+  CAST (person_key AS integer) AS person_key
+  , CAST(full_name AS string) AS full_name
+  , CAST(is_employee AS boolean) AS is_employee_boolean
+  , CAST(is_sales_person AS boolean) AS is_sales_person_boolean
+  , CAST (preferred_name AS string) AS preferred_name
 FROM dim_person__rename
 )
 
-,dim_person__change_boolean as (
+,dim_person__change_boolean AS (
 SELECT
 *
   , CASE
@@ -39,7 +39,7 @@ SELECT
 FROM dim_person__cast_data
 )
 
-, dim_person__add_undefined_record as(
+, dim_person__add_undefined_record AS(
 SELECT
 person_key
 , full_name
@@ -62,7 +62,7 @@ FROM dim_person__change_boolean
 
 SELECT
 person_key
-, coalesce( full_name , 'Invalid') as full_name
-, coalesce( is_employee , 'Invalid') as is_employee
-, coalesce( is_sales_person , 'Invalid') as is_sales_person
+, COALESCE ( full_name , 'Invalid') AS full_name
+, COALESCE ( is_employee , 'Invalid') AS is_employee
+, COALESCE ( is_sales_person , 'Invalid') AS is_sales_person
 FROM dim_person__add_undefined_record
