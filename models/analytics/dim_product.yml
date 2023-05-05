@@ -1,7 +1,13 @@
 version: 2
 
 models:                  
-  - name: dim_product        
+  - name: dim_product
+    tests:
+    - dbt_utils.equal_rowcount:
+        compare_model: "`vit-lam-data.wide_world_importers.warehouse__stock_items`"
+        config:
+          error_if: "<> 2"
+          warn_if: "<> 2"
     columns:
       - name: color_key
         tests:
@@ -41,6 +47,8 @@ models:
       - name: is_chiller_stock
         tests:
           - not_null
+          - accepted_values:
+              values: ['Chiller Stock' , 'Not Chiller Stock', 'Undefined', 'Invalid']
 
       - name: size
         tests:
@@ -72,3 +80,24 @@ models:
           - relationships:
               to: ref('stg_package_type')
               field: package_type_key
+
+      - name: supplier_category_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_supplier_category')
+              field: supplier_category_key
+
+      - name: supplier_delivery_province_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_location')
+              field: supplier_delivery_province_key
+
+      - name: supplier_delivery_country_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_location')
+              field: supplier_delivery_country_key
