@@ -5,6 +5,7 @@ models:
     tests:
       - dbt_utils.equal_rowcount:
           compare_model: "`vit-lam-data.wide_world_importers.sales__order_lines`"
+
     columns:
       - name: order_line_key
         tests:
@@ -24,6 +25,13 @@ models:
           - relationships:
               to: ref('dim_product')
               field: product_key
+
+      - name: package_type_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_package_type')
+              field: package_type_key
 
       - name: sales_order_line_indicator_key
         tests:
@@ -59,8 +67,15 @@ models:
           - relationships:
               to: ref('dim_person')
               field: person_key
-
+          
       - name: order_date
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: "'2013-01-01'"
+              max_value: "CURRENT_DATE"
+
+      - name: expected_delivery_date
         tests:
           - not_null
           - dbt_utils.accepted_range:
