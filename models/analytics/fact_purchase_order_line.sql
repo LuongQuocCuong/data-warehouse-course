@@ -39,6 +39,11 @@ SELECT
       WHEN is_order_line_finalized_boolean is FALSE THEN 'Order Line Not Finalized'
       ELSE 'Invalid'
     END AS is_order_line_finalized
+  , CASE 
+      WHEN is_order_line_finalized_boolean is TRUE THEN 'true'
+      WHEN is_order_line_finalized_boolean is FALSE THEN 'false'
+      ELSE 'Invalid'
+    END AS is_order_line_finalized_text
 FROM fact_purchase_order_line__cast_data
 )
 
@@ -49,6 +54,7 @@ SELECT
   , COALESCE(product_key , 0) AS product_key
   , COALESCE(package_type_key , 0) AS package_type_key
   , COALESCE(is_order_line_finalized , 'Undefined') AS is_order_line_finalized
+  , COALESCE(is_order_line_finalized_text , 'Undefined') AS is_order_line_finalized_text
   , last_receipt_date
   , received_outers
   , ordered_outers
@@ -60,5 +66,20 @@ FROM fact_purchase_order_line__convert_boolean
 SELECT 
   purchase_fact_head.purchase_order_line_key
   , purchase_fact_head.purchase_order_key
+  , purchase_fact_head.product_key
+  , COALESCE(purchase_fact_line.supplier_key,-1) AS supplier_key
+  , COALESCE(purchase_fact_line.contact_person_key,-1) AS contact_person_key
+  , COALESCE(purchase_fact_line.order_finalized_key,-1) AS order_finalized_key
+  , COALESCE(FARM_FiNGERPRINT(CONCAT(purchase_fact_head.package_type_key,'-',purchase_fact_line.delivery_method_key)),-1) AS purchase_order_line_indicator_key
+  , FARM_FiNGERPRINT(purchase_fact_head.is_order_line_finalized_text) order_line_finalized_key
+  , purchase_fact_head.last_receipt_date
+  , purchase_fact_line.order_date
+  , purchase_fact_line.expected_delivery_date
+  , purchase_fact_head.received_outers
+  , purchase_fact_head.ordered_outers
+  , purchase_fact_head.expected_unit_price_per_outer
 FROM fact_purchase_order_line__handle_null AS purchase_fact_head
+LEFT JOIN {{ref("stg_purchase_order")}} AS purchase_fact_line
+  ON purchase_fact_line.purchase_order_key = purchase_fact_head.purchase_order_key
+
 
