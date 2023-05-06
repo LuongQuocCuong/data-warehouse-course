@@ -47,8 +47,20 @@ SELECT
       WHEN is_order_finalized_boolean is FALSE THEN 'Order Not Finalized'
       ELSE 'Invalid'
     END AS is_order_finalized
+  , CASE 
+      WHEN is_order_finalized_boolean is TRUE THEN 'true'
+      WHEN is_order_finalized_boolean is FALSE THEN 'false'
+      ELSE 'Invalid'
+    END AS is_order_finalized_text
 FROM fact_purchase_order__handle_null
 ) 
 
-SELECT *
+SELECT 
+   purchase_order_key
+  , supplier_key
+  , delivery_method_key
+  , contact_person_key
+  , order_date
+  , expected_delivery_date
+  , FARM_FiNGERPRINT(is_order_finalized_text) AS order_finalized_key
 FROM fact_purchase_order__convert_boolean
