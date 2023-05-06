@@ -62,5 +62,5 @@ SELECT
   , contact_person_key
   , order_date
   , expected_delivery_date
-  , FARM_FiNGERPRINT(is_order_finalized_text) AS order_finalized_key
+  , is_order_finalized_text
 FROM fact_purchase_order__convert_boolean
