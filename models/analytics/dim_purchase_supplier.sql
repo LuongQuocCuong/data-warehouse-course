@@ -81,9 +81,9 @@ SELECT
   , delivery_method.delivery_method_name
   , COALESCE(dim_supplier.delivery_city_key,0) AS supplier_city_key
   , location.supplier_delivery_city_name AS supplier_city_name
-  , location.supplier_delivery_province_key AS supplier_province_key
+  , COALESCE(location.supplier_delivery_province_key,0) AS supplier_province_key
   , location.supplier_delivery_province_name AS supplier_province_name
-  , location.supplier_delivery_country_key AS supplier_country_key
+  , COALESCE(location.supplier_delivery_country_key,0) AS supplier_country_key
   , location.supplier_delivery_country_name AS supplier_country_name
   , COALESCE(dim_supplier.supplier_reference, 'Invalid') AS supplier_reference
   , COALESCE(dim_supplier.payment_days,0) AS payment_days
