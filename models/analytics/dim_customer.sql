@@ -176,15 +176,15 @@ SELECT
   , dim_customer.customer_key AS bill_to_customer_key
   , COALESCE ( bill_to_customer.customer_name, 'Invalid') AS bill_to_customer_name
 FROM dim_customer__add_undefined_record AS dim_customer
-LEFT JOIN {{ref('stg_customer_categories')}} AS customer_category
+LEFT JOIN {{ref('stg_dim_customer_categories')}} AS customer_category
   ON customer_category.customer_category_key = dim_customer.customer_category_key
-LEFT JOIN {{ref('stg_buying_group')}} AS buying_group
+LEFT JOIN {{ref('stg_dim_buying_group')}} AS buying_group
   ON dim_customer.buying_group_key = buying_group.buying_group_key
-LEFT JOIN {{ref('stg_delivery_method')}} AS delivery_method
+LEFT JOIN {{ref('stg_dim_delivery_method')}} AS delivery_method
   ON delivery_method.delivery_method_key = dim_customer.delivery_method_key
-LEFT JOIN {{ref("stg_location")}} AS stg_delivery_location
+LEFT JOIN {{ref("stg_dim_location")}} AS stg_delivery_location
   ON stg_delivery_location.supplier_delivery_city_key = dim_customer.delivery_city_key
-LEFT JOIN {{ref("stg_location")}}  AS stg_postal_location
+LEFT JOIN {{ref("stg_dim_location")}}  AS stg_postal_location
   ON stg_postal_location.supplier_delivery_city_key = dim_customer.postal_city_key
 LEFT JOIN {{ref('dim_person')}} AS dim_person__primary_contact
   ON dim_person__primary_contact.person_key = dim_customer.primary_contact_person_key
