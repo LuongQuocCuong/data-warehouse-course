@@ -67,5 +67,5 @@ SELECT
 , fact_line.quantity * fact_line.unit_price * fact_line.tax_rate/100 AS tax_amount
 , (fact_line.quantity * fact_line.unit_price) - (fact_line.quantity * fact_line.unit_price * fact_line.tax_rate/100) AS net_amount
 FROM fact_sale__undefined_handle AS fact_line
-LEFT JOIN {{ref('stg_sale_order')}} AS stg_sale_order
+LEFT JOIN {{ref('stg_fact_sale_order')}} AS stg_sale_order
   ON fact_line.order_key = stg_sale_order.order_key

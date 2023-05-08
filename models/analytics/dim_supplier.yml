@@ -22,26 +22,26 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_supplier_category')
+              to: ref('stg_dim_supplier_category')
               field: supplier_category_key
 
       - name: supplier_delivery_city_key
         tests:
           - not_null
           - relationships:
-              to: ref('stg_location')
+              to: ref('stg_dim_location')
               field: supplier_delivery_city_key
 
       - name: supplier_delivery_province_key
         tests:
           - not_null
           - relationships:
-              to: ref('stg_location')
+              to: ref('stg_dim_location')
               field: supplier_delivery_province_key
               
       - name: supplier_delivery_country_key
         tests:
           - not_null
           - relationships:
-              to: ref('stg_location')
+              to: ref('stg_dim_location')
               field: supplier_delivery_country_key

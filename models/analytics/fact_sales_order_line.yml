@@ -16,7 +16,7 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_sale_order')
+              to: ref('stg_fact_sale_order')
               field: order_key
 
       - name: product_key
@@ -30,7 +30,7 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_package_type')
+              to: ref('stg_dim_package_type')
               field: package_type_key
 
       - name: sales_order_line_indicator_key

@@ -153,9 +153,9 @@ SELECT
 FROM dim_product__add_undefined_record AS dim_product
 LEFT JOIN {{ref('dim_supplier')}} AS dim_supplier
   ON dim_product.supplier_key = dim_supplier.supplier_key
-LEFT JOIN {{ref("stg_color")}} AS color
+LEFT JOIN {{ref('stg_dim_color')}} AS color
   ON color.color_key = dim_product.color_key 
-LEFT JOIN {{ref('stg_package_type')}} AS stg_outer_package_type
+LEFT JOIN {{ref('stg_dim_package_type')}} AS stg_outer_package_type
   ON stg_outer_package_type.package_type_key = dim_product.outer_package_key
-LEFT JOIN {{ref('stg_package_type')}} AS stg_unit_package_type
+LEFT JOIN {{ref('stg_dim_package_type')}} AS stg_unit_package_type
   ON stg_unit_package_type.package_type_key = dim_product.unit_package_key

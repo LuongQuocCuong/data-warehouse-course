@@ -57,7 +57,7 @@ SELECT
   , COALESCE (stg_location.supplier_delivery_province_key,0) AS supplier_delivery_province_key
   , COALESCE (stg_location.supplier_delivery_country_key,0) AS supplier_delivery_country_key
 FROM dim_supplier__add_undefined_record AS dim_supllier
-LEFT JOIN {{ref('stg_supplier_category')}} AS supplier_category
+LEFT JOIN {{ref('stg_dim_supplier_category')}} AS supplier_category
   ON dim_supllier.supplier_category_key = supplier_category.supplier_category_key
-LEFT JOIN {{ref('stg_location')}} AS stg_location
+LEFT JOIN {{ref('stg_dim_location')}} AS stg_location
   ON stg_location.supplier_delivery_city_key = dim_supllier.supplier_delivery_city_key

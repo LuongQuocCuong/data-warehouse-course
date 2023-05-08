@@ -47,28 +47,28 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_customer_categories')
+              to: ref('stg_dim_customer_categories')
               field: customer_category_key
 
       - name: delivery_city_key
         tests:
           - not_null
           - relationships:
-              to: ref('stg_location')
+              to: ref('stg_dim_location')
               field: supplier_delivery_city_key
 
       - name: buying_group_key
         tests:
           - not_null
           - relationships:
-              to: ref('stg_buying_group')
+              to: ref('stg_dim_buying_group')
               field: buying_group_key
 
       - name: delivery_method_key
         tests:
           - not_null
           - relationships:
-              to: ref('stg_delivery_method')
+              to: ref('stg_dim_delivery_method')
               field: delivery_method_key
 
       - name: postal_city_key

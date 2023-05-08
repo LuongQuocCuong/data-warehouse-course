@@ -88,9 +88,9 @@ SELECT
   , COALESCE(dim_supplier.supplier_reference, 'Invalid') AS supplier_reference
   , COALESCE(dim_supplier.payment_days,0) AS payment_days
 FROM dim_supplier__add_undefined_record AS dim_supplier
-LEFT JOIN {{ref('stg_supplier_category')}} AS supplier_category
+LEFT JOIN {{ref('stg_dim_supplier_category')}} AS supplier_category
   ON supplier_category.supplier_category_key = dim_supplier.supplier_category_key
-LEFT JOIN {{ref('stg_delivery_method')}} AS delivery_method
+LEFT JOIN {{ref('stg_dim_delivery_method')}} AS delivery_method
   ON delivery_method.delivery_method_key = dim_supplier.delivery_method_key
-LEFT JOIN {{ref('stg_location')}} AS location
+LEFT JOIN {{ref('stg_dim_location')}} AS location
   ON location.supplier_delivery_province_key = dim_supplier.delivery_city_key

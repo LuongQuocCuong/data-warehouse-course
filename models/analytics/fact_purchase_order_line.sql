@@ -78,7 +78,7 @@ SELECT
   , purchase_fact_head.ordered_outers
   , purchase_fact_head.expected_unit_price_per_outer
 FROM fact_purchase_order_line__handle_null AS purchase_fact_head
-LEFT JOIN {{ref("stg_purchase_order")}} AS purchase_fact_line
+LEFT JOIN {{ref('stg_fact_purchase_order')}} AS purchase_fact_line
   ON purchase_fact_line.purchase_order_key = purchase_fact_head.purchase_order_key
 
 
