@@ -47,7 +47,7 @@ SELECT
   , coalesce(province.country_key,0) as supplier_delivery_country_key
   , country.country_name as supplier_delivery_country_name
 FROM stg_location_add_undefined_record as city
-LEFT JOIN {{ref('stg_location_province')}} as province
+LEFT JOIN {{ref('stg_dim_location_province')}} as province
   ON city.state_province_key = province.province_key
-LEFT JOIN {{ref('stg_location_country')}} as country
+LEFT JOIN {{ref('stg_dim_location_country')}} as country
   ON province.country_key = country.country_key
