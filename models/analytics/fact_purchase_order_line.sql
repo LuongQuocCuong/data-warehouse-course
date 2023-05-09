@@ -69,8 +69,7 @@ SELECT
   , purchase_fact_head.product_key
   , COALESCE(purchase_fact_line.supplier_key,-1) AS supplier_key
   , COALESCE(purchase_fact_line.contact_person_key,-1) AS contact_person_key
-  , FARM_FiNGERPRINT(CONCAT(purchase_fact_head.is_order_line_finalized_text,'-',purchase_fact_line.is_order_finalized_text)) AS purchase_order_line__finalized_indicator_key
-  , COALESCE(FARM_FiNGERPRINT(CONCAT(purchase_fact_head.package_type_key,'-',purchase_fact_line.delivery_method_key)),-1) AS purchase_order_line__method_vs_package_type_indicator_key
+  , FARM_FiNGERPRINT(CONCAT(purchase_fact_head.is_order_line_finalized_text,'-',purchase_fact_line.is_order_finalized_text,'-',purchase_fact_line.delivery_method_key,'-',purchase_fact_head.package_type_key)) AS purchase_indicator_key
   , purchase_fact_head.last_receipt_date
   , purchase_fact_line.order_date
   , purchase_fact_line.expected_delivery_date
@@ -80,5 +79,3 @@ SELECT
 FROM fact_purchase_order_line__handle_null AS purchase_fact_head
 LEFT JOIN {{ref('stg_fact_purchase_order')}} AS purchase_fact_line
   ON purchase_fact_line.purchase_order_key = purchase_fact_head.purchase_order_key
-
-

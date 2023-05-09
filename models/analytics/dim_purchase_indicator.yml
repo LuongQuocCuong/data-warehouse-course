@@ -1,0 +1,46 @@
+version: 2
+
+models:                  
+  - name: dim_purchase_indicator
+    columns:
+      - name: purchase_indicator_key
+        tests:
+          - not_null
+          - unique
+
+      - name: order_line_finalized_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Order Line Not Finalized' , 'Order Line Finalized']
+
+
+      - name: order_finalized_name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Order Not Finalized' , 'Order Finalized']
+
+      - name: order_line_finalized_boolean
+        tests:
+          - not_null
+
+      - name: order_finalized_boolean
+        tests:
+          - not_null
+
+      - name: delivery_method_key
+        tests:
+          - not_null
+
+      - name: delivery_method_name
+        tests:
+          - not_null
+
+      - name: package_type_key
+        tests:
+          - not_null
+
+      - name: package_type_name
+        tests:
+          - not_null

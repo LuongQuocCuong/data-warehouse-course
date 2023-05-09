@@ -32,13 +32,14 @@ models:
         tests:
           - not_null
           
-      - name: purchase_order_line__finalized_indicator_key
+      - name: purchase_indicator_key
         tests:
           - not_null
+          - relationships:
+             to: ref('dim_purchase_indicator')
+             field: purchase_indicator_key
 
-      - name: purchase_order_line__method_vs_package_type_indicator_key
-        tests:
-          - not_null
+
           
           
 

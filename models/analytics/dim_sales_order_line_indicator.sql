@@ -1,6 +1,6 @@
 WITH indicator_table__source as (
-SELECT * FROM `data-warehouse-course-384003.wide_world_importers_dwh_staging.stg_undersupply_back_ordered` 
-  CROSS JOIN `data-warehouse-course-384003.wide_world_importers_dwh_staging.stg_package_type`
+SELECT * FROM {{ref('stg_dim_undersupply_back_ordered')}}
+  CROSS JOIN {{ref('stg_dim_package_type')}}
 )
 
 , indicator_table__add_column_key AS (
