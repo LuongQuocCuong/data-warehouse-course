@@ -1,0 +1,24 @@
+version: 2
+
+models:                  
+  - name: fact_target_salesperson
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('vit-lam-data.wide_world_importers.external__salesperson_target')
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - salesperson_person_key
+            - year_month
+
+    columns:
+      - name: salesperson_person_key
+        tests:
+          - not_null
+
+      - name: target_gross_amount
+        tests:
+          - not_null
+
+      - name: year_month
+        tests:
+          - not_null
