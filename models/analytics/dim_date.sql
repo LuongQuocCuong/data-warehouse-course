@@ -24,3 +24,4 @@ select
     else 'Invaid'
   end as is_weekday_or_weekend
 from dim_date__data_enrich
+ORDER BY date
