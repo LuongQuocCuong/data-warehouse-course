@@ -1,5 +1,7 @@
 # Cài đặt thư viện
 from datetime import datetime, timedelta
+
+import airflow
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 
@@ -18,11 +20,18 @@ dag = DAG(
     catchup=False
 )
 
-run_dbt_task = BashOperator(
+dbt_run = BashOperator(
     task_id='run_dbt',
     # bash_command='dbt run --profiles-dir /path/to/your/profiles --project-dir /Users/macpro/Documents/github-project/data_warehouse_course --models analytics.dim_customer.yml', 
     bash_command='dbt run --select dim_customer', 
     dag=dag
 )
 
-run_dbt_task
+dbt_test = BashOperator(
+    task_id='test_dbt',
+    # bash_command='dbt run --profiles-dir /path/to/your/profiles --project-dir /Users/macpro/Documents/github-project/data_warehouse_course --models analytics.dim_customer.yml', 
+    bash_command='dbt test --select dim_customer', 
+    dag=dag
+)
+
+dbt_run >> dbt_test
