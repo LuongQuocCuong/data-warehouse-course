@@ -1,6 +1,7 @@
 WITH fact_customer_anallytics__summarize AS(
 SELECT
  customer_key
+ , DATE_TRUNC(order_date,MONTH) AS order_date
   , SUM(gross_amount) AS lifetime_sale_amount
   , COUNT(DISTINCT(order_key) )AS lifetime_sale_orders
   , SUM(CASE
@@ -10,7 +11,7 @@ SELECT
       WHEN order_date BETWEEN (DATE_TRUNC('2016-05-31' , MONTH) - INTERVAl 12 MONTH) AND '2016-05-31' Then order_key
     END)) AS l2months_sale_orders
 FROM `data-warehouse-course-384003.wide_world_importers_dwh.fact_sales_order_line`
-GROUP BY 1
+GROUP BY 1,2
 )
 
 , fact_customer_anallytics__add_percentitle AS (
@@ -38,5 +39,8 @@ FROM fact_customer_anallytics__add_percentitle
 )
 
 SELECT
-*
+  *
+  , MAX(order_date) OVER(PARTITION BY customer_key) AS end_purchase_month
+  , MIN(order_date) OVER(PARTITION BY customer_key) AS start_purchsae_month
 FROM fact_customer_anallytics__add_segment
+ORDER BY 1,2
