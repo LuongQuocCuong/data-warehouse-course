@@ -1,46 +1,57 @@
-WITH fact_customer_anallytics__summarize AS(
+WITH dim_customer_attribute__summarize AS(
 SELECT
  customer_key
- , DATE_TRUNC(order_date,MONTH) AS order_date
   , SUM(gross_amount) AS lifetime_sale_amount
   , COUNT(DISTINCT(order_key) )AS lifetime_sale_orders
-  , SUM(CASE
+  , COALESCE(SUM(CASE
       WHEN order_date BETWEEN (DATE_TRUNC('2016-05-31' , MONTH) - INTERVAl 12 MONTH) AND '2016-05-31' THEN gross_amount
-    END) AS l2months_sale_amount 
+    END),0) AS l12m_sale_amount 
   , COUNT(DISTINCT(CASE
       WHEN order_date BETWEEN (DATE_TRUNC('2016-05-31' , MONTH) - INTERVAl 12 MONTH) AND '2016-05-31' Then order_key
-    END)) AS l2months_sale_orders
+    END)) AS l12m_sale_orders
+  , DATE_TRUNC(MAX(order_date), MONTH) AS customer_purchase_end 
+  , DATE_TRUNC(MIN(order_date), MONTH) AS customer_purchase_start 
 FROM `data-warehouse-course-384003.wide_world_importers_dwh.fact_sales_order_line`
-GROUP BY 1,2
+GROUP BY 1
+ORDER BY 1
 )
 
-, fact_customer_anallytics__add_percentitle AS (
+, dim_customer_attribute__percentitle_monetary AS (
 SELECT 
-  *
-  , PERCENT_RANK() OVER(ORDER BY lifetime_sale_amount) AS percenttile_lifetime_sale_amount
-  , PERCENT_RANK() OVER(ORDER BY l2months_sale_amount) AS percenttile_l2months_sale_amount
-FROM fact_customer_anallytics__summarize
+  customer_key
+  , lifetime_sale_amount
+  , lifetime_sale_orders
+  , l12m_sale_amount
+  , l12m_sale_orders
+  , PERCENT_RANK() OVER( ORDER BY lifetime_sale_amount) AS lifetime_monetary_percenttile
+  , PERCENT_RANK() OVER( ORDER BY l12m_sale_amount) AS l12m_monetary_percenttile
+  , customer_purchase_end
+  , customer_purchase_start
+FROM dim_customer_attribute__summarize
 )
 
-, fact_customer_anallytics__add_segment AS (
+, dim_customer_attribute__segment AS (
 SELECT
-  *
+  customer_key
+  , lifetime_sale_amount
+  , lifetime_sale_orders
+  , l12m_sale_amount
+  , l12m_sale_orders
+  , lifetime_monetary_percenttile
+  , l12m_monetary_percenttile
   , CASE
-      WHEN percenttile_lifetime_sale_amount BETWEEN 0.8 AND 1 THEN 'High'
-      WHEN percenttile_lifetime_sale_amount BETWEEN 0.5 AND 0.8 THEN 'Medium'
-      WHEN percenttile_lifetime_sale_amount BETWEEN 0 AND 0.5 THEN 'Low'
+      WHEN lifetime_monetary_percenttile BETWEEN 0.8 AND 1 THEN 'High'
+      WHEN lifetime_monetary_percenttile BETWEEN 0.5 AND 0.8 THEN 'Medium'
+      WHEN lifetime_monetary_percenttile BETWEEN 0 AND 0.5 THEN 'Low'
       ELSE 'Invalid' END AS lifetime_segment
   , CASE
-      WHEN percenttile_l2months_sale_amount BETWEEN 0.8 AND 1 THEN 'High'
-      WHEN percenttile_l2months_sale_amount BETWEEN 0.5 AND 0.8 THEN 'Medium'
-      WHEN percenttile_l2months_sale_amount BETWEEN 0 AND 0.5 THEN 'Low'
-      ELSE 'Invalid' END AS l2months_segment
-FROM fact_customer_anallytics__add_percentitle
+      WHEN l12m_monetary_percenttile BETWEEN 0.8 AND 1 THEN 'High'
+      WHEN l12m_monetary_percenttile BETWEEN 0.5 AND 0.8 THEN 'Medium'
+      WHEN l12m_monetary_percenttile BETWEEN 0 AND 0.5 THEN 'Low'
+      ELSE 'Invalid' END AS l12m_segment
+  , customer_purchase_end
+  , customer_purchase_start
+FROM dim_customer_attribute__percentitle_monetary
 )
-
-SELECT
-  *
-  , MAX(order_date) OVER(PARTITION BY customer_key) AS end_purchase_month
-  , MIN(order_date) OVER(PARTITION BY customer_key) AS start_purchsae_month
-FROM fact_customer_anallytics__add_segment
-ORDER BY 1,2
+SELECT * FROM dim_customer_attribute__segment
+ORDER BY 1
