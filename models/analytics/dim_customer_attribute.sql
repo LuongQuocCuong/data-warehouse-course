@@ -11,7 +11,7 @@ SELECT
     END)) AS l12m_sale_orders
   , DATE_TRUNC(MAX(order_date), MONTH) AS customer_purchase_end 
   , DATE_TRUNC(MIN(order_date), MONTH) AS customer_purchase_start 
-FROM `data-warehouse-course-384003.wide_world_importers_dwh.fact_sales_order_line`
+FROM {{ref('fact_sales_order_line')}}
 GROUP BY 1
 ORDER BY 1
 )
