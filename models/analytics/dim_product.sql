@@ -132,10 +132,18 @@ SELECT
   , dim_product.quantity_per_outer 
   , dim_product.is_chiller_stock
   , COALESCE (external_product.category_key , -1) AS category_key
-  , COALESCE(external_categories.category_name, 'Invalid') AS category_name
-  , COALESCE(external_categories.parent_category_key, -1) AS parent_category_key
-  , COALESCE(external_categories.parent_category_name, 'Invalid') AS parent_category_name
-  , COALESCE(external_categories.category_level, -1) AS category_level
+  , COALESCE(dim_categories.category_name, 'Invalid') AS category_name
+  , COALESCE(dim_categories.parent_category_key, -1) AS parent_category_key
+  , COALESCE(dim_categories.parent_category_name, 'Invalid') AS parent_category_name
+  , COALESCE(dim_categories.category_level, -1) AS category_level
+  , dim_categories.category_level_1_key
+  , dim_categories.category_level_1_name
+  , dim_categories.category_level_2_key
+  , dim_categories.category_level_2_name
+  , dim_categories.category_level_3_key
+  , dim_categories.category_level_3_name
+  , dim_categories.category_level_4_key
+  , dim_categories.category_level_4_name
   , dim_product.tax_rate 
   , dim_product.unit_price 
   , dim_product.recommended_retail_price 
@@ -166,5 +174,5 @@ LEFT JOIN {{ref('stg_dim_package_type')}} AS stg_unit_package_type
   ON stg_unit_package_type.package_type_key = dim_product.unit_package_key
 LEFT JOIN {{ref('stg_dim_external_product')}} AS external_product
   USING (product_key)
-LEFT JOIN {{ref('stg_dim_external_categories')}} AS external_categories
+LEFT JOIN {{ref('dim_category')}} AS dim_categories
   USING (category_key)
