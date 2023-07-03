@@ -5,7 +5,7 @@ SELECT *
 
 , dim_customer__rename_coulumn AS (
 SELECT
-  customer_id AS customer_key
+  customer_id 
   , customer_name AS customer_name
   , is_statement_sent
   , is_on_credit_hold
@@ -26,7 +26,7 @@ from dim_customer__source
 
 , dim_customer__cast_data AS(
 SELECT  
- CAST (customer_key AS integer) AS customer_key
+ CAST (customer_id AS integer) AS customer_id
   , CAST (customer_name AS string) AS customer_name
   , CAST (is_statement_sent AS boolean) AS is_statement_sent_boolean
   , CAST (is_on_credit_hold AS boolean) AS is_on_credit_hold_boolean
@@ -65,7 +65,7 @@ FROM dim_customer__cast_data
 
 , dim_customer__handle_null AS(
 SELECT 
-  customer_key
+  customer_id
   , coalesce( customer_name , 'Undefined') AS customer_name
   , is_statement_sent
   , is_on_credit_hold
@@ -86,7 +86,7 @@ FROM dim_customer__convert_data
 
 , dim_customer__add_undefined_record AS (
 SELECT 
-  customer_key
+  customer_id
   , customer_name
   , is_statement_sent
   , is_on_credit_hold
@@ -105,7 +105,7 @@ SELECT
 FROM dim_customer__handle_null
 UNION ALL 
   SELECT
-    0 AS customer_key
+    0 AS customer_id
     , 'Undefined' AS customer_name
     , 'Undefined' AS is_statement_sent
     , 'Undefined' AS is_on_credit_hold
@@ -124,7 +124,7 @@ UNION ALL
 
 , UNION ALL 
   SELECT
-    -1 AS customer_key
+    -1 AS customer_id
     , 'Invalid' AS customer_name
     , 'Invalid' AS is_statement_sent
     , 'Invalid' AS is_on_credit_hold
@@ -143,7 +143,7 @@ UNION ALL
 )
 
 SELECT 
-  dim_customer.customer_key
+  dim_customer.customer_id
   , dim_customer.customer_name
   , dim_customer.is_statement_sent
   , dim_customer.is_on_credit_hold
@@ -173,8 +173,12 @@ SELECT
   , COALESCE ( dim_person__primary_contact.full_name , 'Invalid')AS primary_contact_person_name
   , dim_customer.alternate_contact_person_key
   , COALESCE ( dim_person__alternate_contact.full_name ,'Invalid') AS alternate_contact_person_name
-  , dim_customer.customer_key AS bill_to_customer_key
+  , dim_customer.customer_id AS bill_to_customer_key
   , COALESCE ( bill_to_customer.customer_name, 'Invalid') AS bill_to_customer_name
+  , COALESCE(FARM_FiNGERPRINT(CONCAT(customer_relationship.customer_key, customer_relationship.begin_effective_date)),0) AS customer_key
+  , COALESCE(customer_relationship.membership,'None') AS membership
+  , COALESCE(customer_relationship.begin_effective_date, CAST('2013-01-01' AS DATE FORMAT 'YYYY-MM-DD'))AS begin_effective_date
+  , COALESCE(customer_relationship.end_effective_date, CAST('2050-01-01' AS DATE FORMAT 'YYYY-MM-DD')) AS end_effective_date
 FROM dim_customer__add_undefined_record AS dim_customer
 LEFT JOIN {{ref('stg_dim_customer_categories')}} AS customer_category
   ON customer_category.customer_category_key = dim_customer.customer_category_key
@@ -191,5 +195,6 @@ LEFT JOIN {{ref('dim_person')}} AS dim_person__primary_contact
 LEFT JOIN {{ref('dim_person')}} AS dim_person__alternate_contact
   ON dim_person__alternate_contact.person_key = dim_customer.alternate_contact_person_key
 LEFT JOIN dim_customer__handle_null AS bill_to_customer
-  ON bill_to_customer.customer_key =  dim_customer.customer_key
-LEFT JOIN 
+  ON bill_to_customer.customer_id =  dim_customer.customer_id
+LEFT JOIN {{ref('stg_dim_customer_relationship')}} AS customer_relationship
+  ON customer_relationship.customer_key = dim_customer.customer_id
