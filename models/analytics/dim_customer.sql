@@ -142,6 +142,18 @@ UNION ALL
     , -1 AS bill_to_customer_key
 )
 
+, dim_customer__integrate_scd_type_2 AS (
+  SELECT 
+    dim_customer.*
+ , COALESCE(FARM_FiNGERPRINT(CONCAT(customer_relationship.customer_id, customer_relationship.begin_effective_date)),0) AS customer_key
+  , COALESCE(customer_relationship.membership,'None') AS membership
+  , COALESCE(customer_relationship.begin_effective_date, CAST('2013-01-01' AS DATE FORMAT 'YYYY-MM-DD'))AS begin_effective_date
+  , COALESCE(customer_relationship.end_effective_date, CAST('2050-01-01' AS DATE FORMAT 'YYYY-MM-DD')) AS end_effective_date
+  FROM dim_customer__add_undefined_record AS dim_customer
+  LEFT JOIn {{ref('stg_dim_customer_relationship')}} AS customer_relationship
+  ON customer_relationship.customer_id = dim_customer.customer_id
+)
+
 SELECT 
   dim_customer.customer_id
   , dim_customer.customer_name
@@ -175,11 +187,10 @@ SELECT
   , COALESCE ( dim_person__alternate_contact.full_name ,'Invalid') AS alternate_contact_person_name
   , dim_customer.customer_id AS bill_to_customer_key
   , COALESCE ( bill_to_customer.customer_name, 'Invalid') AS bill_to_customer_name
-  , COALESCE(FARM_FiNGERPRINT(CONCAT(customer_relationship.customer_key, customer_relationship.begin_effective_date)),0) AS customer_key
-  , COALESCE(customer_relationship.membership,'None') AS membership
-  , COALESCE(customer_relationship.begin_effective_date, CAST('2013-01-01' AS DATE FORMAT 'YYYY-MM-DD'))AS begin_effective_date
-  , COALESCE(customer_relationship.end_effective_date, CAST('2050-01-01' AS DATE FORMAT 'YYYY-MM-DD')) AS end_effective_date
-FROM dim_customer__add_undefined_record AS dim_customer
+  , dim_customer.customer_key
+  , dim_customer.begin_effective_date
+  , dim_customer.end_effective_date
+FROM dim_customer__integrate_scd_type_2 AS dim_customer
 LEFT JOIN {{ref('stg_dim_customer_categories')}} AS customer_category
   ON customer_category.customer_category_key = dim_customer.customer_category_key
 LEFT JOIN {{ref('stg_dim_buying_group')}} AS buying_group
@@ -196,5 +207,4 @@ LEFT JOIN {{ref('dim_person')}} AS dim_person__alternate_contact
   ON dim_person__alternate_contact.person_key = dim_customer.alternate_contact_person_key
 LEFT JOIN dim_customer__handle_null AS bill_to_customer
   ON bill_to_customer.customer_id =  dim_customer.customer_id
-LEFT JOIN {{ref('stg_dim_customer_relationship')}} AS customer_relationship
-  ON customer_relationship.customer_key = dim_customer.customer_id
+
