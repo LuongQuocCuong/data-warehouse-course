@@ -6,7 +6,7 @@ FROM `vit-lam-data.wide_world_importers.sales__orders`
 , stg_sale_order__rename AS (
 SELECT
   order_id AS order_key
-  , customer_id AS customer_key
+  , customer_id 
   , salesperson_person_id AS sales_person_key
   , picked_by_person_id AS picked_by_person_key
   , contact_person_id AS contact_person_key
@@ -20,7 +20,7 @@ FROM stg_sale_order__source
 , stg_sale_order__cast_data AS (
 SELECT
   CAST (order_key AS integer) AS order_key
-  , CAST(customer_key AS integer) AS customer_key
+  , CAST(customer_id AS integer) AS customer_id
   , CAST (sales_person_key AS integer) AS sales_person_key
   , CAST (picked_by_person_key AS integer) AS picked_by_person_key
   , CAST (contact_person_key AS integer) AS contact_person_key
@@ -50,7 +50,7 @@ FROM stg_sale_order__cast_data
 , stg_sale_order__Unifined_handle AS (
 SELECT
   COALESCE (order_key , 0) AS order_key
-  , COALESCE (customer_key , 0) AS customer_key
+  , COALESCE (customer_id , 0) AS customer_id
   , COALESCE (sales_person_key , 0) AS sales_person_key
   , COALESCE (picked_by_person_key , 0) AS picked_by_person_key
   , COALESCE (contact_person_key , 0) AS contact_person_key
@@ -65,7 +65,7 @@ FROM stg_sale_order__convert_boolean
 , stg_sale_order__add_undifined_record AS (
 SELECT
   order_key
-  , customer_key
+  , customer_id
   , sales_person_key
   , picked_by_person_key
   , contact_person_key
@@ -78,7 +78,7 @@ FROM stg_sale_order__Unifined_handle
 UNION ALL
   SELECT
     0 AS order_key
-    ,0 AS customer_key
+    ,0 AS customer_id
     ,0 AS sales_person_key
     ,0 AS picked_by_person_key
     ,0 AS contact_person_key
@@ -90,7 +90,7 @@ UNION ALL
 , UNION ALL
   SELECT
     -1 AS order_key
-    ,-1 AS customer_key
+    ,-1 AS customer_id
     ,-1 AS sales_person_key
     ,-1 AS picked_by_person_key
     ,-1 AS contact_person_key
@@ -102,7 +102,7 @@ UNION ALL
 )
 SELECT 
   order_key
-  , customer_key
+  , customer_id
   , sales_person_key
   , picked_by_person_key
   , contact_person_key
