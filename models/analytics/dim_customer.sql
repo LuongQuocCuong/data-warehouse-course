@@ -192,3 +192,4 @@ LEFT JOIN {{ref('dim_person')}} AS dim_person__alternate_contact
   ON dim_person__alternate_contact.person_key = dim_customer.alternate_contact_person_key
 LEFT JOIN dim_customer__handle_null AS bill_to_customer
   ON bill_to_customer.customer_key =  dim_customer.customer_key
+LEFT JOIN 
