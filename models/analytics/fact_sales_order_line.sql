@@ -50,7 +50,8 @@ SELECT
 , COALESCE (fact_line.order_key,0) AS order_key
 , COALESCE (fact_line.product_key,0) AS product_key
 , COALESCE (fact_line.package_type_key,0) AS package_type_key
-, COALESCE (stg_sale_order.customer_key , 0) AS customer_key
+, COALESCE (stg_sale_order.customer_id , 0) AS customer_id
+, COALESCE(FARM_FiNGERPRINT(CONCAT(dim_customer.customer_id,dim_customer.begin_effective_date)),0) AS customer_key
 , COALESCE (stg_sale_order.picked_by_person_key , 0) AS picked_by_person_key
 , COALESCE (stg_sale_order.sales_person_key , 0) AS sales_person_key
 , COALESCE (stg_sale_order.contact_person_key ,0) AS contact_person_key
@@ -69,3 +70,6 @@ SELECT
 FROM fact_sale__undefined_handle AS fact_line
 LEFT JOIN {{ref('stg_fact_sale_order')}} AS stg_sale_order
   ON fact_line.order_key = stg_sale_order.order_key
+LEFT JOIN {{ref('dim_customer')}} AS dim_customer
+  ON dim_customer.customer_id = stg_sale_order.customer_id
+  AND stg_sale_order.order_date BETWEEN dim_customer.begin_effective_date AND dim_customer.end_effective_date

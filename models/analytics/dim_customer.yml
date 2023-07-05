@@ -2,13 +2,6 @@ version: 2
 
 models:                  
   - name: dim_customer
-    tests:
-    - dbt_utils.equal_rowcount:
-        compare_model: "`vit-lam-data.wide_world_importers.sales__customers`"
-        config:
-          error_if: "<> 2"
-          warn_if: "<> 2"
-
     columns:
       - name: customer_key
         tests:
